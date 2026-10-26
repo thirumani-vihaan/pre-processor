@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#3563e9">
+  <title>DataPrep Lab | Classification Research Workspace</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="/static/style.css">
+  <script defer src="/static/app.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/"><span class="brand-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M5 17V11M12 17V5M19 17V8" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><path d="M4 21H20" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" opacity=".55"/></svg></span> DataPrep<span class="brand-light">Lab</span></a>
+    <nav><span class="local-badge"><i></i> Local workspace</span><a href="/guide" class="small-link">Documentation ↗</a></nav>
+  </header>
+  <main>
+    <section class="hero">
+      <div>
+        <p class="eyebrow"><span class="eyebrow-dot"></span> CLASSIFICATION RESEARCH WORKSPACE</p>
+        <h1>Understand your data.<br><span class="highlight">Improve your models.</span></h1>
+        <p class="hero-copy">Data Preprocessing and Outlier Detection<br>for Improving Classification Accuracy.</p>
+        <div class="hero-tags"><span>Train-only preprocessing</span><span>Stratified validation</span><span>Reproducible results</span></div>
+      </div>
+      <div class="hero-art" aria-hidden="true">
+        <div class="art-header"><span class="art-label">A clearer view of your data</span><span class="art-status">Illustrative</span></div>
+        <svg viewBox="0 0 390 180"><defs><linearGradient id="cluster-area" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#eef3ff"/><stop offset="1" stop-color="#f3faf9"/></linearGradient></defs><rect x="20" y="14" width="350" height="144" rx="10" fill="url(#cluster-area)"/><path d="M20 50H370M20 86H370M20 122H370M90 14V158M160 14V158M230 14V158M300 14V158" stroke="#e2e9f3" stroke-dasharray="3 5"/><ellipse cx="121" cy="112" rx="56" ry="32" fill="#3563e9" opacity=".06"/><ellipse cx="269" cy="64" rx="51" ry="30" fill="#168b82" opacity=".07"/><g fill="#3563e9" opacity=".78"><circle cx="86" cy="117" r="4"/><circle cx="104" cy="102" r="5"/><circle cx="121" cy="123" r="5"/><circle cx="107" cy="135" r="4"/><circle cx="145" cy="94" r="4"/><circle cx="153" cy="118" r="5"/><circle cx="125" cy="98" r="4"/><circle cx="136" cy="112" r="4"/><circle cx="94" cy="125" r="3"/></g><g fill="#168b82" opacity=".8"><circle cx="244" cy="58" r="5"/><circle cx="269" cy="72" r="5"/><circle cx="286" cy="49" r="4"/><circle cx="262" cy="44" r="4"/><circle cx="301" cy="71" r="4"/><circle cx="280" cy="87" r="4"/><circle cx="253" cy="79" r="3"/><circle cx="285" cy="66" r="3"/></g><g fill="#dd8261"><path d="m74 40 5-5 5 5-5 5Z"/><path d="m310 131 5-5 5 5-5-5Z"/><path d="m190 47 5-5 5 5-5 5Z"/></g></svg>
+        <div class="art-footer"><span><i class="dot blue"></i> Training signals</span><span><i class="dot coral"></i> Candidate anomalies</span></div>
+      </div>
+    </section>
+
+    <div class="workflow-strip"><span><b>1</b> Select a dataset</span><span>→</span><span><b>2</b> Configure your experiment</span><span>→</span><span><b>3</b> Review the results</span></div>
+    <div id="error" class="notice error" role="alert" hidden></div>
+    <div class="workspace">
+      <aside class="control-panel card">
+        <div class="section-heading"><span class="step-square" aria-hidden="true"><svg viewBox="0 0 20 20" fill="none"><path d="M3 5H17M3 10H17M3 15H17" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M7 3V7M13 8V12M8 13V17" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg></span><h2>Experiment settings</h2></div>
+        <form id="experiment-form">
+          <label for="dataset">DATA SOURCE</label>
+          <select id="dataset"><option value="demo">Messy customer signals · demo</option><option value="breast_cancer">Wisconsin breast cancer</option><option value="wine">Wine recognition</option><option value="iris">Iris flowers</option><option value="upload">Upload your CSV</option></select>
+          <p id="dataset-description" class="helper"></p>
+          <a class="small-link sample-link" href="/api/sample.csv">Download example CSV ↓</a>
+          <div id="upload-controls" hidden>
+            <label for="csv-file" class="upload-zone">↑ Choose a CSV <span>UTF-8 · max 8 MB · 5,000 rows</span><input id="csv-file" type="file" accept=".csv"></label>
+            <p id="upload-status" class="helper" aria-live="polite"></p>
+            <label for="target">TARGET COLUMN</label><select id="target"></select>
+            <label for="exclude">EXCLUDE ID / LEAKAGE COLUMNS</label><select id="exclude" multiple size="4" aria-describedby="exclude-help"></select>
+            <p id="exclude-help" class="helper">Ctrl-click to select multiple. Exclude IDs, free text, and any feature derived from the target.</p>
+          </div>
+          <label class="check-row" id="stress-row"><input id="stress" type="checkbox"><span>Stress-test with missing values + anomalies</span></label>
+          <div class="field-grid">
+            <div><label for="scaler">SCALING</label><select id="scaler"><option value="robust">Robust / median-IQR</option><option value="standard">Standard / Z-score</option><option value="minmax">Min–max / 0–1</option></select></div>
+            <div><label for="folds">CV FOLDS</label><select id="folds"><option value="3">3-fold</option><option value="5">5-fold</option></select></div>
+          </div>
+          <label class="check-row"><input id="pca" type="checkbox"><span>PCA reduction · retain 95% variance</span></label>
+          <label for="test-size">TEST HOLDOUT <output id="test-size-value">25%</output></label>
+          <input id="test-size" type="range" min="15" max="35" value="25" step="5">
+          <fieldset><legend>CLASSIFIERS</legend><div id="models" class="check-grid"></div></fieldset>
+          <fieldset><legend>OUTLIER DETECTORS</legend><div id="methods" class="check-grid"></div></fieldset>
+          <details class="advanced"><summary>Fine-tune thresholds</summary>
+            <label for="contamination">EXPECTED OUTLIERS · IF / LOF</label><input id="contamination" type="number" min=".01" max=".20" step=".01" value=".06">
+            <label for="iqr-factor">IQR MULTIPLIER</label><input id="iqr-factor" type="number" min="1.5" max="5" step=".1" value="2.5">
+            <label for="z-threshold">Z-SCORE THRESHOLD</label><input id="z-threshold" type="number" min="2" max="5" step=".1" value="3">
+            <label for="dbscan-eps">DBSCAN EPS · STANDARDIZED SPACE</label><input id="dbscan-eps" type="number" min=".1" max="10" step=".1" value="2">
+            <label for="seed">RANDOM SEED</label><input id="seed" type="number" min="0" max="2147483647" step="1" value="42">
+          </details>
+          <button id="profile-button" type="button" class="button secondary full">Inspect data first ↗</button>
+          <button id="run-button" type="submit" class="button primary full">Run experiment <span>→</span></button>
+          <p class="helper privacy-note">Runs entirely on your machine. No API keys, cloud calls, or external assets.</p>
+        </form>
+      </aside>
+
+      <section class="results-area" aria-label="Experiment results">
+        <div id="loading" class="loading card" role="status" hidden><div class="spinner"></div><h2>Running your experiment</h2><p>Fitting fold-local pipelines, evaluating detectors, and comparing classifiers.</p><p class="helper">Large CSVs and neural networks take longer. Keep this page open.</p><div class="loading-steps"><span>Training-only fitting</span><span>Stratified validation</span><span>Held-out evaluation</span></div></div>
+        <section id="empty-state" class="empty-state card">
+          <div class="empty-icon" aria-hidden="true"><svg viewBox="0 0 28 28" fill="none"><path d="M5 23V6M5 23H24M10 18L15 12L19 15L24 7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="15" cy="12" r="2" fill="currentColor"/></svg></div>
+          <span class="eyebrow">EXPERIMENT WORKSPACE</span><h2>Turn data quality<br>into <span class="highlight">measurable evidence.</span></h2>
+          <p>Compare preprocessing strategies in one controlled experiment.<br>Choose a dataset to begin, or explore the built-in demonstration.</p>
+          <div class="stage-cards"><div><b>A</b><h3>Minimal baseline</h3><p>Impute + encode.<br>No scaling or removal.</p></div><div><b>B</b><h3>Preprocessed</h3><p>Clean + scale.<br>Optional PCA reduction.</p></div><div><b>C</b><h3>Outlier-aware</h3><p>Detect + remove.<br>Training rows only.</p></div></div>
+          <div class="honesty-note"><strong>The goal is evidence, not a guaranteed improvement.</strong><p>Unusual observations can be useful signal. The lab keeps negative results and excludes unsafe filtering configurations.</p></div>
+          <button id="quick-demo" class="button primary" type="button">Run demonstration →</button>
+        </section>
+        <section id="profile-card" class="card" hidden><div class="section-heading"><span class="step-square">↗</span><h2>Dataset inspection</h2></div><div id="profile-content"></div></section>
+        <div id="results" hidden>
+          <div class="result-topline"><div><p class="eyebrow">EXPERIMENT COMPLETE</p><h2 id="result-title"></h2><p id="run-meta" class="helper"></p></div><a id="bundle-link" class="button dark">↓ Download project results</a></div>
+          <div class="metrics-grid" id="metrics"></div>
+          <div id="result-insight" class="insight"></div>
+          <nav class="tabs" aria-label="Result sections"><button type="button" class="active" data-tab="overview">01 Overview</button><button type="button" data-tab="outliers">02 Outliers</button><button type="button" data-tab="evaluation">03 Evaluation</button><button type="button" data-tab="reproduce">04 Reproduce</button></nav>
+          <section class="tab-content" id="tab-overview">
+            <article class="card"><div class="chart-heading"><div><p class="eyebrow">THE CONTROLLED COMPARISON</p><h3>Same model. Different data treatment.</h3></div><span class="tag">TEST ACCURACY</span></div><div id="comparison-chart"></div><p class="helper">Minimal → preprocessed → each detector, for the CV-selected classifier. The held-out test records stay identical.</p></article>
+            <article class="card"><div class="chart-heading"><div><p class="eyebrow">COMPLETE EXPERIMENT RESULTS</p><h3>Model comparison</h3></div><label class="compact-label">SORT BY<select id="sort-results"><option value="cv_f1">CV macro-F1</option><option value="accuracy">Test accuracy · exploratory</option><option value="f1">Test macro-F1 · exploratory</option></select></label></div><div class="table-scroll"><table><thead><tr><th>Model / treatment</th><th>CV F1 ± SD</th><th>Accuracy</th><th>Test F1</th><th>ROC-AUC</th><th>Removed</th></tr></thead><tbody id="leaderboard"></tbody></table></div><p class="helper">Winner locked using training-CV macro-F1. Standard deviation describes fold variability, not a confidence interval. Inspecting test-ranked rows does not make them valid model selections.</p></article>
+            <article class="card"><p class="eyebrow">DATA QUALITY SUMMARY</p><h3>Training data at a glance</h3><div id="quality-summary"></div></article>
+          </section>
+          <section class="tab-content" id="tab-outliers" hidden>
+            <article class="card"><div class="chart-heading"><div><p class="eyebrow">TRAINING DATA / PCA PROJECTION</p><h3>The outlier landscape</h3></div><label class="compact-label" for="outlier-view">EXPLORE DETECTOR<select id="outlier-view"></select></label></div><div id="scatter-chart"></div><p id="scatter-treatment" class="helper"></p><p class="helper">Two-dimensional training-only PCA projection for visualization, not the detector’s decision space. Outliers are coral diamonds; colors show classes. Exploring another detector does not change the selected model or evaluation results.</p></article>
+            <article class="card"><p class="eyebrow">TRAINING-ONLY / PER-CLASS IMPACT</p><h3>Class retention analysis</h3><div id="class-impact"></div><p class="helper">Unsupervised detection can remove valid minority examples. Compare removal rates before accepting a filtering strategy. The operational class-count safeguard is not a fairness guarantee.</p></article>
+            <article class="card"><p class="eyebrow">BEFORE / AFTER THE DETECTOR SHOWN ABOVE</p><h3>Feature distribution shifts</h3><div id="box-chart"></div><p class="helper">Endpoints are observed min/max; boxes show Q1–Q3 and center lines show medians. Missing entries are excluded from these summaries.</p></article>
+            <article class="card"><p class="eyebrow">NUMERIC FEATURES / TRAINING PARTITION</p><h3>Correlation map</h3><div id="correlation-chart" class="table-scroll"></div><p class="helper">Pearson correlations for the first 12 numeric features. Constant-feature correlations are displayed as zero.</p></article>
+          </section>
+          <section class="tab-content" id="tab-evaluation" hidden>
+            <div class="two-columns"><article class="card"><p class="eyebrow">HELD-OUT TEST RECORDS</p><h3>Confusion matrix</h3><div id="confusion-chart" class="table-scroll"></div><p class="helper">Rows = actual classes. Columns = predicted classes.</p></article><article class="card"><p class="eyebrow">SELECTED MODEL / TEST SET</p><h3>Beyond accuracy</h3><div id="metric-details"></div><div id="roc-chart"></div></article></div>
+            <article class="card"><p class="eyebrow">USE YOUR TRAINED PIPELINE</p><h3>Predict new records</h3><p class="helper">Edit the JSON example. Include every feature; use null for missing values. Predictions are educational, not professional advice.</p><label for="prediction-json">INPUT RECORDS · JSON ARRAY</label><textarea id="prediction-json" rows="9" spellcheck="false"></textarea><button id="predict-button" class="button secondary" type="button">Predict records →</button><div id="prediction-output" aria-live="polite"></div></article>
+          </section>
+          <section class="tab-content" id="tab-reproduce" hidden>
+            <article class="card"><p class="eyebrow">THE EXPERIMENT CONTRACT</p><h3>Reproducible. Auditable. Honest.</h3><ol id="protocol-list" class="protocol-list"></ol><div id="config-summary" class="code-block"></div><div class="export-grid" id="export-links"></div><p class="helper">Model files use joblib. Only load trusted, locally generated models. Artifacts may contain your uploaded data; do not share sensitive CSVs.</p></article>
+            <article id="warnings-card" class="card" hidden><p class="eyebrow">EXPLICITLY REPORTED</p><h3>Warnings & excluded treatments</h3><div id="warnings-content"></div></article>
+          </section>
+        </div>
+        <section class="history-section"><div class="chart-heading"><h3>Recent experiments</h3><button id="refresh-history" type="button" class="text-button">Refresh ↻</button></div><div id="history"><p class="helper">No saved experiments yet.</p></div></section>
+      </section>
+    </div>
+    <section class="syllabus-strip"><span class="eyebrow">BUILT AROUND YOUR SYLLABUS</span><div><span><b>UNIT I</b> Preprocessing + KDD</span><span><b>UNIT IV</b> Classification + evaluation</span><span><b>UNIT V</b> Clustering + outlier detection</span></div><a href="/guide">View exact scope & viva guide ↗</a></section>
+  </main>
+  <footer><strong>DataPrep Lab</strong><span>Data quality & classification research</span><span>Local-first · Reproducible by design</span></footer>
+</body>
+</html>

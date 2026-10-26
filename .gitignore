@@ -1,0 +1,32 @@
+# Local environments and dependencies
+**/.venv/
+**/venv/
+**/node_modules/
+
+# Generated Python files and test caches
+**/__pycache__/
+**/.pytest_cache/
+**/.mypy_cache/
+**/.ruff_cache/
+*.py[cod]
+*.egg-info/
+
+# Uploaded datasets, trained models, and experiment outputs
+**/artifacts/
+
+# Credentials and local configuration
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+.netrc
+_netrc
+
+# Operating-system files and logs
+.DS_Store
+Thumbs.db
+desktop.ini
+*.log
